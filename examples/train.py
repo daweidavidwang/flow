@@ -177,6 +177,63 @@ def setup_exps_rllib(flow_params,
     return alg_run, gym_name, config
 
 
+def test(submodule):
+    import ray
+    from ray.rllib.rollout import rollout
+    from ray.rllib.agents.registry import get_agent_class
+    flow_params = submodule.flow_params
+    n_cpus = submodule.N_CPUS
+    n_rollouts = submodule.N_ROLLOUTS
+    policy_graphs = getattr(submodule, "POLICY_GRAPHS", None)
+    policy_mapping_fn = getattr(submodule, "policy_mapping_fn", None)
+    policies_to_train = getattr(submodule, "policies_to_train", None)
+
+    alg_run, gym_name, config = setup_exps_rllib(
+    flow_params, n_cpus, n_rollouts,
+    policy_graphs, policy_mapping_fn, policies_to_train)
+
+    exp_config = {
+        "run": alg_run,
+        "env": gym_name,
+        "config": {
+            **config
+        },
+        "checkpoint": "/headless/ray_results/multiagent_ring/PPO_MultiAgentWaveAttenuationPOEnv-v1_9de7b5be_2021-11-18_10-09-29dzvr2cdf/checkpoint_560/checkpoint-560",
+        "steps": 1000,
+
+
+    }
+
+    # config = args.config
+    # if not config:
+    #     # Load configuration from file
+    #     config_dir = os.path.dirname(args.checkpoint)
+    #     config_path = os.path.join(config_dir, "params.json")
+    #     if not os.path.exists(config_path):
+    #         config_path = os.path.join(config_dir, "../params.json")
+    #     if not os.path.exists(config_path):
+    #         raise ValueError(
+    #             "Could not find params.json in either the checkpoint dir or "
+    #             "its parent directory.")
+    #     with open(config_path) as f:
+    #         config = json.load(f)
+    #     if "num_workers" in config:
+    #         config["num_workers"] = min(2, config["num_workers"])
+
+    # if not args.env:
+    #     if not config.get("env"):
+    #         parser.error("the following arguments are required: --env")
+    #     args.env = config.get("env")
+
+    ray.init()
+
+    cls = get_agent_class(exp_config["run"])
+    agent = cls(env=exp_config["env"], config=config)
+    agent.restore(exp_config["checkpoint"])
+    num_steps = int(exp_config["steps"])
+    rollout(agent, exp_config["env"], num_steps, no_render=False)
+
+
 def train_rllib(submodule, flags):
     """Train policies using the PPO algorithm in RLlib."""
     import ray
@@ -351,7 +408,7 @@ def main(args):
         multiagent = False
     elif hasattr(module_ma, flags.exp_config):
         submodule = getattr(module_ma, flags.exp_config)
-        assert flags.rl_trainer.lower() in ["rllib", "h-baselines"], \
+        assert flags.rl_trainer.lower() in ["rllib", "h-baselines", "test"], \
             "Currently, multiagent experiments are only supported through "\
             "RLlib. Try running this experiment using RLlib: " \
             "'python train.py EXP_CONFIG'"
@@ -366,6 +423,8 @@ def main(args):
         train_stable_baselines(submodule, flags)
     elif flags.rl_trainer.lower() == "h-baselines":
         train_h_baselines(flags.exp_config, args, multiagent)
+    elif flags.rl_trainer.lower() == "test":
+        test(submodule)
     else:
         raise ValueError("rl_trainer should be either 'rllib', 'h-baselines', "
                          "or 'stable-baselines'.")
