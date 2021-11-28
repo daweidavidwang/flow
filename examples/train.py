@@ -139,7 +139,7 @@ def setup_exps_rllib(flow_params,
 
     horizon = flow_params['env'].horizon
 
-    alg_run = "PPO"
+    alg_run = "DDPG"
 
     agent_cls = get_agent_class(alg_run)
     config = deepcopy(agent_cls._default_config)
