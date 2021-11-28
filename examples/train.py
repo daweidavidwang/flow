@@ -148,7 +148,7 @@ def setup_exps_rllib(flow_params,
     config["train_batch_size"] = horizon * n_rollouts
     config["gamma"] = 0.999  # discount rate
     config["model"].update({"fcnet_hiddens": [32, 32, 32]})
-    config["use_gae"] = True
+    # config["use_gae"] = True
     config["lambda"] = 0.97
     config["kl_target"] = 0.02
     config["num_sgd_iter"] = 10
