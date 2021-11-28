@@ -139,20 +139,27 @@ def setup_exps_rllib(flow_params,
 
     horizon = flow_params['env'].horizon
 
-    alg_run = "PPO"
+    alg_run = "DDPG"
 
     agent_cls = get_agent_class(alg_run)
     config = deepcopy(agent_cls._default_config)
 
+    ## ppp config
+    # config["num_workers"] = n_cpus
+    # config["train_batch_size"] = horizon * n_rollouts
+    # config["gamma"] = 0.999  # discount rate
+    # config["model"].update({"fcnet_hiddens": [32, 32, 32]})
+    # config["use_gae"] = True
+    # config["lambda"] = 0.97
+    # config["kl_target"] = 0.02
+    # config["num_sgd_iter"] = 10
+    # config["horizon"] = horizon
+
+    ## ddpg config
     config["num_workers"] = n_cpus
     config["train_batch_size"] = horizon * n_rollouts
     config["gamma"] = 0.999  # discount rate
     config["model"].update({"fcnet_hiddens": [32, 32, 32]})
-    config["use_gae"] = True
-    config["lambda"] = 0.97
-    config["kl_target"] = 0.02
-    config["num_sgd_iter"] = 10
-    config["horizon"] = horizon
 
     # save the flow params for replay
     flow_json = json.dumps(
