@@ -159,7 +159,9 @@ def setup_exps_rllib(flow_params,
     config["train_batch_size"] = horizon * n_rollouts
     config["gamma"] = 0.999  # discount rate
     config["model"].update({"fcnet_hiddens": [32, 32, 32]})
-    
+    config["num_gpus"] = 1
+    config["train_batch_size"] = 1000
+
     # save the flow params for replay
     flow_json = json.dumps(
         flow_params, cls=FlowParamsEncoder, sort_keys=True, indent=4)
