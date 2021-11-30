@@ -3,7 +3,7 @@
 Trains a number of autonomous vehicles to stabilize the flow of 22 vehicles in
 a variable length ring road.
 """
-from ray.rllib.agents.ppo.ppo_policy import PPOTFPolicy
+from ray.rllib.agents.ddpg.ddpg_policy import DDPGTFPolicy
 from ray.tune.registry import register_env
 
 from flow.core.params import SumoParams, EnvParams, InitialConfig, NetParams
@@ -115,7 +115,7 @@ act_space = test_env.action_space
 
 def gen_policy():
     """Generate a policy in RLlib."""
-    return PPOTFPolicy, obs_space, act_space, {}
+    return DDPGTFPolicy, obs_space, act_space, {}
 
 
 # Setup PG with an ensemble of `num_policies` different policy graphs
