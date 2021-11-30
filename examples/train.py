@@ -156,7 +156,7 @@ def setup_exps_rllib(flow_params,
 
     ## ddpg config
     config["num_workers"] = n_cpus
-    config["train_batch_size"] = horizon/2
+    # config["train_batch_size"] = horizon/2
     config["gamma"] = 0.999  # discount rate
     config["model"].update({"fcnet_hiddens": [32, 32, 32]})
     config["num_gpus"] = 1
