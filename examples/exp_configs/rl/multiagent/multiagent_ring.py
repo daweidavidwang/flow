@@ -18,9 +18,9 @@ HORIZON = 3000
 # number of rollouts per training iteration
 N_ROLLOUTS = 20
 # number of parallel workers
-N_CPUS = 15
+N_CPUS = 6
 # number of automated vehicles. Must be less than or equal to 22.
-NUM_AUTOMATED = 5
+NUM_AUTOMATED = 6
 
 
 # We evenly distribute the automated vehicles in the network.
