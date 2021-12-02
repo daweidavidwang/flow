@@ -20,7 +20,7 @@ N_ROLLOUTS = 20
 # number of parallel workers
 N_CPUS = 15
 # number of automated vehicles. Must be less than or equal to 22.
-NUM_AUTOMATED = 4
+NUM_AUTOMATED = 5
 
 
 # We evenly distribute the automated vehicles in the network.
