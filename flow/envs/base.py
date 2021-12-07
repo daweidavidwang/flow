@@ -552,6 +552,9 @@ class Env(gym.Env, metaclass=ABCMeta):
         observation = np.copy(states)
 
         # perform (optional) warm-up steps before training
+        for _ in range(100):
+            observation, _, _, _ = self.step(rl_actions=-1)
+
         for _ in range(self.env_params.warmup_steps):
             observation, _, _, _ = self.step(rl_actions=None)
 
