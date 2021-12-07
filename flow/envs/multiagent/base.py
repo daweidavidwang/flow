@@ -257,7 +257,7 @@ class MultiEnv(MultiAgentEnv, Env):
 
         # perform (optional) warm-up steps before training
         for _ in range(self.env_params.warmup_steps):
-            observation, _, _, _ = self.step(rl_actions=None)
+            observation, _, _, _ = self.step(rl_actions={'rl_0_0': [-1], 'rl_1_0': [-1]})
 
         # render a frame
         self.render(reset=True)
