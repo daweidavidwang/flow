@@ -11,7 +11,7 @@ HORIZON = 200
 # number of rollouts per training iteration
 N_ROLLOUTS = 30
 # number of parallel workers
-N_CPUS = 2
+N_CPUS = 15
 # set to True if you would like to run the experiment with inflows of vehicles
 # from the edges, and False otherwise
 USE_INFLOWS = True
