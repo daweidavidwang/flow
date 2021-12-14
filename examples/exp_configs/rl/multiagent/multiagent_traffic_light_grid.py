@@ -11,7 +11,7 @@ from flow.utils.registry import make_create_env
 
 # Experiment parameters
 N_ROLLOUTS = 100  # number of rollouts per training iteration
-N_CPUS = 10  # number of parallel workers
+N_CPUS = 20  # number of parallel workers
 
 # Environment parameters
 HORIZON = 1000  # time horizon of a single rollout
@@ -20,7 +20,7 @@ INNER_LENGTH = 300  # length of inner edges in the traffic light grid network
 LONG_LENGTH = 100  # length of final edge in route
 SHORT_LENGTH = 300  # length of edges that vehicles start on
 # number of vehicles originating in the left, right, top, and bottom edges
-N_LEFT, N_RIGHT, N_TOP, N_BOTTOM = 2, 2, 2, 2
+N_LEFT, N_RIGHT, N_TOP, N_BOTTOM = 5, 5, 5, 5
 
 EDGE_INFLOW = 300  # inflow rate of vehicles at every edge
 N_ROWS = 1  # number of row of bidirectional lanes
