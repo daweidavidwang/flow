@@ -198,7 +198,7 @@ def test(submodule):
         "config": {
             **config
         },
-        "checkpoint": "/headless/ray_results/multiagent_ring/PPO_MultiAgentWaveAttenuationPOEnv-v1_9de7b5be_2021-11-18_10-09-29dzvr2cdf/checkpoint_560/checkpoint-560",
+        "checkpoint": "/headless/ray_results/multiagent_ring/PPO_MultiAgentWaveAttenuationPOEnv-v1_8b6d3730_2021-12-02_14-31-32kbf2g6_8/checkpoint_4580/checkpoint-4580",
         "steps": 1000,
 
 
