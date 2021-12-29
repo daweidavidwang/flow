@@ -203,12 +203,17 @@ class MultiAgentWaveAttenuationPOEnv(MultiEnv):
             max_speed = 15.
             max_length = self.env_params.additional_params['ring_length'][1]
 
+            # observation = np.array([
+            #     self.k.vehicle.get_speed(rl_id) / max_speed,
+            #     (self.k.vehicle.get_speed(lead_id) -
+            #      self.k.vehicle.get_speed(rl_id))
+            #     / max_speed,
+            #     self.k.vehicle.get_headway(rl_id) / max_length
+            # ])
             observation = np.array([
-                self.k.vehicle.get_speed(rl_id) / max_speed,
-                (self.k.vehicle.get_speed(lead_id) -
-                 self.k.vehicle.get_speed(rl_id))
-                / max_speed,
-                self.k.vehicle.get_headway(rl_id) / max_length
+                0,
+                0,
+                0
             ])
             obs.update({rl_id: observation})
 
