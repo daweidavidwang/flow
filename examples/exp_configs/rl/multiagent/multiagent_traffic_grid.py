@@ -2,7 +2,7 @@
 
 from ray.rllib.agents.ppo.ppo_policy import PPOTFPolicy
 from flow.envs.multiagent import MultiTrafficLightGridPOEnv
-from flow.networks import TrafficLightGridNetwork
+from flow.networks import TrafficGridNetwork
 from flow.core.params import SumoParams, EnvParams, InitialConfig, NetParams
 from flow.core.params import InFlows, SumoCarFollowingParams, VehicleParams
 from flow.controllers import SimCarFollowingController, GridRouter
@@ -11,11 +11,11 @@ from ray.tune.registry import register_env
 from flow.utils.registry import make_create_env
 
 # Experiment parameters
-N_ROLLOUTS = 63  # number of rollouts per training iteration
+N_ROLLOUTS = 100  # number of rollouts per training iteration
 N_CPUS = 1  # number of parallel workers
 
 # Environment parameters
-HORIZON = 400  # time horizon of a single rollout
+HORIZON = 1000  # time horizon of a single rollout
 V_ENTER = 30  # enter speed for departing vehicles
 INNER_LENGTH = 300  # length of inner edges in the traffic light grid network
 LONG_LENGTH = 100  # length of final edge in route
@@ -24,8 +24,8 @@ SHORT_LENGTH = 300  # length of edges that vehicles start on
 N_LEFT, N_RIGHT, N_TOP, N_BOTTOM = 1, 1, 1, 1
 
 EDGE_INFLOW = 300  # inflow rate of vehicles at every edge
-N_ROWS = 3  # number of row of bidirectional lanes
-N_COLUMNS = 3  # number of columns of bidirectional lanes
+N_ROWS = 1  # number of row of bidirectional lanes
+N_COLUMNS = 1  # number of columns of bidirectional lanes
 NUM_AUTOMATED = 2
 
 # we place a sufficient number of vehicles to ensure they confirm with the
@@ -95,7 +95,7 @@ flow_params = dict(
     env_name=MultiTrafficLightGridPOEnv,
 
     # name of the network class the experiment is running on
-    network=TrafficLightGridNetwork,
+    network=TrafficGridNetwork,
 
     # simulator that is used by the experiment
     simulator='traci',

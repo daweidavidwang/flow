@@ -9,6 +9,7 @@ from flow.networks.bay_bridge_toll import BayBridgeTollNetwork
 from flow.networks.bottleneck import BottleneckNetwork
 from flow.networks.figure_eight import FigureEightNetwork
 from flow.networks.traffic_light_grid import TrafficLightGridNetwork
+from flow.networks.traffic_grid import TrafficGridNetwork
 from flow.networks.highway import HighwayNetwork
 from flow.networks.ring import RingNetwork
 from flow.networks.merge import MergeNetwork
@@ -19,7 +20,7 @@ from flow.networks.i210_subnetwork import I210SubNetwork
 
 __all__ = [
     "Network", "BayBridgeNetwork", "BayBridgeTollNetwork",
-    "BottleneckNetwork", "FigureEightNetwork", "TrafficLightGridNetwork",
+    "BottleneckNetwork", "FigureEightNetwork", "TrafficLightGridNetwork","TrafficGridNetwork"
     "HighwayNetwork", "RingNetwork", "MergeNetwork", "MultiRingNetwork",
     "MiniCityNetwork", "HighwayRampsNetwork", "I210SubNetwork"
 ]
