@@ -39,7 +39,7 @@ humans_remaining = num_human
 for i in range(NUM_AUTOMATED):
     # Add one automated vehicle.
     vehicles.add(
-        veh_id="rl_{}".format(i),
+        veh_id="rl",
         acceleration_controller=(RLController, {}),
         # car_following_params=SumoCarFollowingParams(
         #     min_gap=2.5,
@@ -54,7 +54,7 @@ for i in range(NUM_AUTOMATED):
     vehicles_to_add = round(humans_remaining / (NUM_AUTOMATED - i))
     humans_remaining -= vehicles_to_add
     vehicles.add(
-        veh_id="human_{}".format(i),
+        veh_id="human",
         acceleration_controller=(SimCarFollowingController, {}),
         car_following_params=SumoCarFollowingParams(
             min_gap=2.5,
@@ -78,6 +78,12 @@ inflow = InFlows()
 for edge in outer_edges:
     inflow.add(
         veh_type="human",
+        edge=edge,
+        vehs_per_hour=EDGE_INFLOW,
+        departLane="free",
+        departSpeed=V_ENTER)
+    inflow.add(
+        veh_type="rl",
         edge=edge,
         vehs_per_hour=EDGE_INFLOW,
         departLane="free",
