@@ -12,7 +12,7 @@ from flow.utils.registry import make_create_env
 
 # Experiment parameters
 N_ROLLOUTS = 63  # number of rollouts per training iteration
-N_CPUS = 63  # number of parallel workers
+N_CPUS = 1  # number of parallel workers
 
 # Environment parameters
 HORIZON = 400  # time horizon of a single rollout
@@ -34,36 +34,34 @@ NUM_AUTOMATED = 2
 vehicles = VehicleParams()
 num_vehicles = (N_LEFT + N_RIGHT) * N_COLUMNS + (N_BOTTOM + N_TOP) * N_ROWS
 num_human = num_vehicles - NUM_AUTOMATED
-humans_remaining = num_human
 
-for i in range(NUM_AUTOMATED):
-    # Add one automated vehicle.
-    vehicles.add(
-        veh_id="rl",
-        acceleration_controller=(RLController, {}),
-        # car_following_params=SumoCarFollowingParams(
-        #     min_gap=2.5,
-        #     max_speed=V_ENTER,
-        #     decel=7.5,  # avoid collisions at emergency stops
-        #     speed_mode="right_of_way",
-        # ),
-        routing_controller=(GridRouter, {}),
-        num_vehicles=1)
 
-    # Add a fraction of the remaining human vehicles.
-    vehicles_to_add = round(humans_remaining / (NUM_AUTOMATED - i))
-    humans_remaining -= vehicles_to_add
-    vehicles.add(
-        veh_id="human",
-        acceleration_controller=(SimCarFollowingController, {}),
-        car_following_params=SumoCarFollowingParams(
-            min_gap=2.5,
-            max_speed=V_ENTER,
-            decel=7.5,  # avoid collisions at emergency stops
-            speed_mode="right_of_way",
-        ),
-        routing_controller=(GridRouter, {}),
-        num_vehicles=vehicles_to_add)
+# Add one automated vehicle.
+vehicles.add(
+    veh_id="rl",
+    acceleration_controller=(RLController, {}),
+    # car_following_params=SumoCarFollowingParams(
+    #     min_gap=2.5,
+    #     max_speed=V_ENTER,
+    #     decel=7.5,  # avoid collisions at emergency stops
+    #     speed_mode="right_of_way",
+    # ),
+    routing_controller=(GridRouter, {}),
+    num_vehicles=NUM_AUTOMATED)
+
+# Add a fraction of the remaining human vehicles.
+vehicles_to_add = num_human
+vehicles.add(
+    veh_id="human",
+    acceleration_controller=(SimCarFollowingController, {}),
+    car_following_params=SumoCarFollowingParams(
+        min_gap=2.5,
+        max_speed=V_ENTER,
+        decel=7.5,  # avoid collisions at emergency stops
+        speed_mode="right_of_way",
+    ),
+    routing_controller=(GridRouter, {}),
+    num_vehicles=vehicles_to_add)
 
 
 # inflows of vehicles are place on all outer edges (listed here)
@@ -106,7 +104,7 @@ flow_params = dict(
     sim=SumoParams(
         restart_instance=True,
         sim_step=1,
-        render=False,
+        render=True,
     ),
 
     # environment related parameters (see flow.core.params.EnvParams)
