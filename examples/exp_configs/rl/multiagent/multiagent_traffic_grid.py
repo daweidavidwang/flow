@@ -1,7 +1,7 @@
 """Multi-agent traffic light example (single shared policy)."""
 
 from ray.rllib.agents.ppo.ppo_policy import PPOTFPolicy
-from flow.envs.multiagent import MultiTrafficLightGridPOEnv
+from flow.envs.multiagent import MultiTrafficGridPOEnv
 from flow.networks import TrafficGridNetwork
 from flow.core.params import SumoParams, EnvParams, InitialConfig, NetParams
 from flow.core.params import InFlows, SumoCarFollowingParams, VehicleParams
@@ -24,8 +24,8 @@ SHORT_LENGTH = 300  # length of edges that vehicles start on
 N_LEFT, N_RIGHT, N_TOP, N_BOTTOM = 1, 1, 1, 1
 
 EDGE_INFLOW = 300  # inflow rate of vehicles at every edge
-N_ROWS = 1  # number of row of bidirectional lanes
-N_COLUMNS = 1  # number of columns of bidirectional lanes
+N_ROWS = 2  # number of row of bidirectional lanes
+N_COLUMNS = 2  # number of columns of bidirectional lanes
 NUM_AUTOMATED = 2
 
 # we place a sufficient number of vehicles to ensure they confirm with the
@@ -92,7 +92,7 @@ flow_params = dict(
     exp_tag="grid_0_{}x{}_i{}_multiagent".format(N_ROWS, N_COLUMNS, EDGE_INFLOW),
 
     # name of the flow environment the experiment is running on
-    env_name=MultiTrafficLightGridPOEnv,
+    env_name=MultiTrafficGridPOEnv,
 
     # name of the network class the experiment is running on
     network=TrafficGridNetwork,
@@ -118,6 +118,8 @@ flow_params = dict(
             "tl_type": "actuated",
             "num_local_edges": 4,
             "num_local_lights": 4,
+            "max_accel": 1,
+            "max_decel": 1,
         },
     ),
 

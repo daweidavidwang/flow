@@ -8,6 +8,7 @@ from flow.envs.multiagent.ring.wave_attenuation import \
 from flow.envs.multiagent.ring.accel import AdversarialAccelEnv
 from flow.envs.multiagent.ring.accel import MultiAgentAccelPOEnv
 from flow.envs.multiagent.traffic_light_grid import MultiTrafficLightGridPOEnv
+from flow.envs.multiagent.traffic_grid import MultiTrafficGridPOEnv
 from flow.envs.multiagent.highway import MultiAgentHighwayPOEnv
 from flow.envs.multiagent.merge import MultiAgentMergePOEnv
 from flow.envs.multiagent.i210 import I210MultiEnv
@@ -17,6 +18,7 @@ __all__ = [
     'AdversarialAccelEnv',
     'MultiWaveAttenuationPOEnv',
     'MultiTrafficLightGridPOEnv',
+    'MultiTrafficGridPOEnv',
     'MultiAgentHighwayPOEnv',
     'MultiAgentAccelPOEnv',
     'MultiAgentWaveAttenuationPOEnv',

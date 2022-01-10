@@ -63,7 +63,7 @@ class MultiTrafficGridPOEnv(TrafficGridPOEnv, MultiEnv):
         Distance and speed to the coming intersection, 
         the in-coming flow volume of each intersection path. 
         """
-        return Box(low=0, high=1, shape=(6 * self.num_rl, ), dtype=np.float32)
+        return Box(low=0, high=1, shape=(6, ), dtype=np.float32)
 
     @property
     def action_space(self):
@@ -71,7 +71,7 @@ class MultiTrafficGridPOEnv(TrafficGridPOEnv, MultiEnv):
         return Box(
             low=-abs(self.env_params.additional_params["max_decel"]),
             high=self.env_params.additional_params["max_accel"],
-            shape=(self.num_rl, ),
+            shape=(1, ),
             dtype=np.float32)
 
     def get_state(self):
@@ -104,28 +104,15 @@ class MultiTrafficGridPOEnv(TrafficGridPOEnv, MultiEnv):
         """
         See parent class.
 
-        Issues action for each traffic light agent.
         """
         for veh_id in self.k.vehicle.get_rl_ids():
             self.k.vehicle.apply_acceleration(veh_id, rl_actions[veh_id])
 
     def compute_reward(self, rl_actions, **kwargs):
         """See class definition."""
-        if rl_actions is None:
-            return {}
-
-        if self.env_params.evaluate:
-            rew = -rewards.min_delay_unscaled(self)
-        else:
-            rew = -rewards.min_delay_unscaled(self) \
-                  + rewards.penalize_standstill(self, gain=0.2)
-
-        # each agent receives reward normalized by number of lights
-        rew /= self.num_traffic_lights
-
         rews = {}
-        for rl_id in rl_actions.keys():
-            rews[rl_id] = rew
+        for rl_id in self.k.vehicle.get_rl_ids():
+            rews[rl_id] = 0
         return rews
 
     def additional_command(self):

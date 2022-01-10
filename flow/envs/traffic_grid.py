@@ -524,7 +524,7 @@ class TrafficGridEnv(Env):
         return veh_ids_ordered[:num_closest] + (pad_lst if padding else [])
 
 
-class TrafficLightGridPOEnv(TrafficGridEnv):
+class TrafficGridPOEnv(TrafficGridEnv):
     """Environment used to train traffic lights.
 
     Required from env_params:
@@ -676,29 +676,29 @@ class TrafficLightGridPOEnv(TrafficGridEnv):
         [self.k.vehicle.set_observed(veh_id) for veh_id in self.observed_ids]
 
 
-class TrafficLightGridBenchmarkEnv(TrafficLightGridPOEnv):
-    """Class used for the benchmarks in `Benchmarks for reinforcement learning inmixed-autonomy traffic`."""
+# class TrafficLightGridBenchmarkEnv(TrafficLightGridPOEnv):
+#     """Class used for the benchmarks in `Benchmarks for reinforcement learning inmixed-autonomy traffic`."""
 
-    def compute_reward(self, rl_actions, **kwargs):
-        """See class definition."""
-        if self.env_params.evaluate:
-            return - rewards.min_delay_unscaled(self)
-        else:
-            return rewards.desired_velocity(self)
+#     def compute_reward(self, rl_actions, **kwargs):
+#         """See class definition."""
+#         if self.env_params.evaluate:
+#             return - rewards.min_delay_unscaled(self)
+#         else:
+#             return rewards.desired_velocity(self)
 
 
-class TrafficLightGridTestEnv(TrafficGridEnv):
-    """
-    Class for use in testing.
+# class TrafficLightGridTestEnv(TrafficGridEnv):
+#     """
+#     Class for use in testing.
 
-    This class overrides RL methods of traffic light grid so we can test
-    construction without needing to specify RL methods
-    """
+#     This class overrides RL methods of traffic light grid so we can test
+#     construction without needing to specify RL methods
+#     """
 
-    def _apply_rl_actions(self, rl_actions):
-        """See class definition."""
-        pass
+#     def _apply_rl_actions(self, rl_actions):
+#         """See class definition."""
+#         pass
 
-    def compute_reward(self, rl_actions, **kwargs):
-        """No return, for testing purposes."""
-        return 0
+#     def compute_reward(self, rl_actions, **kwargs):
+#         """No return, for testing purposes."""
+#         return 0
