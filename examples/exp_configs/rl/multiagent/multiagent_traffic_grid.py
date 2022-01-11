@@ -24,10 +24,11 @@ SHORT_LENGTH = 300  # length of edges that vehicles start on
 N_LEFT, N_RIGHT, N_TOP, N_BOTTOM = 1, 1, 1, 1
 
 EDGE_INFLOW = 300  # inflow rate of vehicles at every edge
-N_ROWS = 2  # number of row of bidirectional lanes
-N_COLUMNS = 2  # number of columns of bidirectional lanes
+N_ROWS = 1  # number of row of bidirectional lanes
+N_COLUMNS = 1  # number of columns of bidirectional lanes
 NUM_AUTOMATED = 2
-
+AUTO_PLATOON = 1
+HUMAN_PLATOON = 2
 # we place a sufficient number of vehicles to ensure they confirm with the
 # total number specified above. We also use a "right_of_way" speed mode to
 # support traffic light compliance
@@ -61,7 +62,7 @@ vehicles.add(
         speed_mode="right_of_way",
     ),
     routing_controller=(GridRouter, {}),
-    num_vehicles=vehicles_to_add)
+    num_vehicles=num_human)
 
 
 # inflows of vehicles are place on all outer edges (listed here)
@@ -74,18 +75,20 @@ outer_edges += ["top{}_{}".format(i, N_COLUMNS) for i in range(N_ROWS)]
 # equal inflows for each edge (as dictate by the EDGE_INFLOW constant)
 inflow = InFlows()
 for edge in outer_edges:
-    inflow.add(
-        veh_type="human",
-        edge=edge,
-        vehs_per_hour=EDGE_INFLOW,
-        departLane="free",
-        departSpeed=V_ENTER)
-    inflow.add(
-        veh_type="rl",
-        edge=edge,
-        vehs_per_hour=EDGE_INFLOW,
-        departLane="free",
-        departSpeed=V_ENTER)
+    for _ in range(HUMAN_PLATOON):
+        inflow.add(
+            veh_type="human",
+            edge=edge,
+            vehs_per_hour=EDGE_INFLOW,
+            departLane="free",
+            departSpeed=V_ENTER)
+    for _ in range(AUTO_PLATOON):
+        inflow.add(
+            veh_type="rl",
+            edge=edge,
+            vehs_per_hour=EDGE_INFLOW,
+            departLane="free",
+            departSpeed=V_ENTER)
 
 flow_params = dict(
     # name of the experiment
@@ -104,7 +107,7 @@ flow_params = dict(
     sim=SumoParams(
         restart_instance=True,
         sim_step=1,
-        render=True,
+        render=False,
     ),
 
     # environment related parameters (see flow.core.params.EnvParams)
