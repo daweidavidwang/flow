@@ -28,7 +28,7 @@ N_ROWS = 1  # number of row of bidirectional lanes
 N_COLUMNS = 1  # number of columns of bidirectional lanes
 NUM_AUTOMATED = 2
 AUTO_PLATOON = 1
-HUMAN_PLATOON = 2
+HUMAN_PLATOON = 0
 # we place a sufficient number of vehicles to ensure they confirm with the
 # total number specified above. We also use a "right_of_way" speed mode to
 # support traffic light compliance
