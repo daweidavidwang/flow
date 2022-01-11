@@ -237,7 +237,7 @@ class MultiTrafficGridPOEnv(TrafficGridPOEnv, MultiEnv):
         if rl_actions is None:
             return {}
 
-        print(str(rl_actions))
+        # print(str(rl_actions))
         if self.env_params.evaluate:
             rew = -rewards.min_delay_unscaled(self)
         else:
