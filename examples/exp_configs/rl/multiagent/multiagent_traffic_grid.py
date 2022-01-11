@@ -11,11 +11,11 @@ from ray.tune.registry import register_env
 from flow.utils.registry import make_create_env
 
 # Experiment parameters
-N_ROLLOUTS = 100  # number of rollouts per training iteration
-N_CPUS = 1  # number of parallel workers
+N_ROLLOUTS = 50  # number of rollouts per training iteration
+N_CPUS = 15  # number of parallel workers
 
 # Environment parameters
-HORIZON = 1000  # time horizon of a single rollout
+HORIZON = 2000  # time horizon of a single rollout
 V_ENTER = 30  # enter speed for departing vehicles
 INNER_LENGTH = 300  # length of inner edges in the traffic light grid network
 LONG_LENGTH = 100  # length of final edge in route
@@ -28,7 +28,7 @@ N_ROWS = 1  # number of row of bidirectional lanes
 N_COLUMNS = 1  # number of columns of bidirectional lanes
 NUM_AUTOMATED = 2
 AUTO_PLATOON = 1
-HUMAN_PLATOON = 2
+HUMAN_PLATOON = 1
 # we place a sufficient number of vehicles to ensure they confirm with the
 # total number specified above. We also use a "right_of_way" speed mode to
 # support traffic light compliance
