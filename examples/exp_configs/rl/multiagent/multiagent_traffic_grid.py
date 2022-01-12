@@ -34,7 +34,7 @@ DENSITY = 2
 # total number specified above. We also use a "right_of_way" speed mode to
 # support traffic light compliance
 vehicles = VehicleParams()
-num_vehicles = (N_LEFT + N_RIGHT) * N_COLUMNS + (N_BOTTOM + N_TOP) * N_ROWS
+num_vehicles = 3
 num_human = num_vehicles - NUM_AUTOMATED
 
 
