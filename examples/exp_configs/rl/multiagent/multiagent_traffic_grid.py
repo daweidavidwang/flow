@@ -24,11 +24,11 @@ SHORT_LENGTH = 300  # length of edges that vehicles start on
 N_LEFT, N_RIGHT, N_TOP, N_BOTTOM = 1, 1, 1, 1
 
 EDGE_INFLOW = 300  # inflow rate of vehicles at every edge
-N_ROWS = 1  # number of row of bidirectional lanes
-N_COLUMNS = 1  # number of columns of bidirectional lanes
+N_ROWS = 2  # number of row of bidirectional lanes
+N_COLUMNS = 2  # number of columns of bidirectional lanes
 NUM_AUTOMATED = 2
-AUTO_PLATOON = 1
-HUMAN_PLATOON = 0
+AUTO_PLATOON = 2
+HUMAN_PLATOON = 2
 # we place a sufficient number of vehicles to ensure they confirm with the
 # total number specified above. We also use a "right_of_way" speed mode to
 # support traffic light compliance
