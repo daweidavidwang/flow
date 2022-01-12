@@ -197,7 +197,7 @@ class MultiTrafficGridPOEnv(TrafficGridPOEnv, MultiEnv):
                                         for e in local_edges]
                 # print("local edge number !!!!!!!!"+str(local_edge_numbers))
                 # print("velocity avg"+str(velocity_avg[local_edge_numbers])+str())
-                observation = np.array(np.concatenate(
+                observation = np.clip(np.array(np.concatenate(
                 [[self.k.vehicle.get_speed(rl_id) / max_speed],
                 [(self.k.network.edge_length(
                         self.k.vehicle.get_edge(
@@ -206,11 +206,11 @@ class MultiTrafficGridPOEnv(TrafficGridPOEnv, MultiEnv):
                 speeds[rl_id_num], dist_to_intersec[rl_id_num],
                     edge_number[rl_id_num], density[local_edge_numbers],
                     velocity_avg[local_edge_numbers]
-                    ]))
+                    ])), 0, 1)
                 obs.update({rl_id: observation})
             else:
                 ## the vehicle already leaving the map
-                observation = np.array(np.concatenate(
+                observation = np.clip(np.array(np.concatenate(
                 [[self.k.vehicle.get_speed(rl_id) / max_speed],
                 [(self.k.network.edge_length(
                         self.k.vehicle.get_edge(
@@ -219,7 +219,7 @@ class MultiTrafficGridPOEnv(TrafficGridPOEnv, MultiEnv):
                 speeds[rl_id_num], dist_to_intersec[rl_id_num],
                     edge_number[rl_id_num], [0,0,0,0],
                     [0,0,0,0]
-                    ]))
+                    ])), 0, 1)
                 obs.update({rl_id: observation})
 
         return obs
