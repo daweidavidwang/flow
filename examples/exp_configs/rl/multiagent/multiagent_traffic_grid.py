@@ -24,8 +24,8 @@ SHORT_LENGTH = 300  # length of edges that vehicles start on
 N_LEFT, N_RIGHT, N_TOP, N_BOTTOM = 1, 1, 1, 1
 
 EDGE_INFLOW = 300  # inflow rate of vehicles at every edge
-N_ROWS = 2  # number of row of bidirectional lanes
-N_COLUMNS = 2  # number of columns of bidirectional lanes
+N_ROWS = 1  # number of row of bidirectional lanes
+N_COLUMNS = 1  # number of columns of bidirectional lanes
 NUM_AUTOMATED = 2
 AUTO_PLATOON = 1
 HUMAN_PLATOON = 1
@@ -34,7 +34,7 @@ DENSITY = 2
 # total number specified above. We also use a "right_of_way" speed mode to
 # support traffic light compliance
 vehicles = VehicleParams()
-num_vehicles = (N_LEFT + N_RIGHT) * N_COLUMNS + (N_BOTTOM + N_TOP) * N_ROWS
+num_vehicles = 3
 num_human = num_vehicles - NUM_AUTOMATED
 
 
