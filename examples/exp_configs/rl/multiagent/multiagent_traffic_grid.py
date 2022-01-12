@@ -27,8 +27,9 @@ EDGE_INFLOW = 300  # inflow rate of vehicles at every edge
 N_ROWS = 2  # number of row of bidirectional lanes
 N_COLUMNS = 2  # number of columns of bidirectional lanes
 NUM_AUTOMATED = 2
-AUTO_PLATOON = 2
-HUMAN_PLATOON = 2
+AUTO_PLATOON = 1
+HUMAN_PLATOON = 1
+DENSITY = 2
 # we place a sufficient number of vehicles to ensure they confirm with the
 # total number specified above. We also use a "right_of_way" speed mode to
 # support traffic light compliance
@@ -75,20 +76,21 @@ outer_edges += ["top{}_{}".format(i, N_COLUMNS) for i in range(N_ROWS)]
 # equal inflows for each edge (as dictate by the EDGE_INFLOW constant)
 inflow = InFlows()
 for edge in outer_edges:
-    for _ in range(HUMAN_PLATOON):
-        inflow.add(
-            veh_type="human",
-            edge=edge,
-            vehs_per_hour=EDGE_INFLOW,
-            departLane="free",
-            departSpeed=V_ENTER)
-    for _ in range(AUTO_PLATOON):
-        inflow.add(
-            veh_type="rl",
-            edge=edge,
-            vehs_per_hour=EDGE_INFLOW,
-            departLane="free",
-            departSpeed=V_ENTER)
+    for _ in range(DENSITY):
+        for _ in range(HUMAN_PLATOON):
+            inflow.add(
+                veh_type="human",
+                edge=edge,
+                vehs_per_hour=EDGE_INFLOW,
+                departLane="free",
+                departSpeed=V_ENTER)
+        for _ in range(AUTO_PLATOON):
+            inflow.add(
+                veh_type="rl",
+                edge=edge,
+                vehs_per_hour=EDGE_INFLOW,
+                departLane="free",
+                departSpeed=V_ENTER)
 
 flow_params = dict(
     # name of the experiment
