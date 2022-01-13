@@ -114,7 +114,7 @@ class RealWorldNetwork(Network):
                  traffic_lights=TrafficLightParams()):
         """Initialize an n*m traffic light grid network."""
 
-        net_params = NetParams(template='CSeditClean_1.net.xml')
+        net_params = NetParams(template='/headless/code/flow/networks/CSeditClean_1.net.xml')
 
         # name of the network (DO NOT CHANGE)
         self.name = "BobLoblawsLawBlog"
@@ -128,8 +128,17 @@ class RealWorldNetwork(Network):
 
         # build row routes (vehicles go from left to right and vice versa)
         routes = {
-            "test1": ["229357869#2", "229357869#3", "229357869#4", "229488615#0", "229488615#1", "978613906", "978613911", "718258618#0", "718258618#1"],
-            "test2": ["36978229#3", "36978229#4", "36978229#5", "36978229#6", "878066809#0", "878066809#1", "877763357#0", "877763357#1", "877763357#2"]
+            "229357869#2": ["229357869#2", "229357869#3", "229357869#4", "229488615#0", "229488615#1", "978613906", "978613911", "718258618#0", "718258618#1"],
+            "36978229#3": ["36978229#3", "36978229#4", "36978229#5", "36978229#6", "878066809#0", "878066809#1", "877763357#0", "877763357#1", "877763357#2"]
         }
 
         return routes
+
+    @staticmethod
+    def gen_custom_start_pos(cls, net_params, initial_config, num_vehicles):
+
+        startpositions = [["229357869#2","0"],["36978229#3","0"]]
+        startlanes = ["random","random"]
+
+
+        return startpositions, startlanes

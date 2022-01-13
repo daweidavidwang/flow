@@ -12,7 +12,7 @@ from flow.utils.registry import make_create_env
 
 # Experiment parameters
 N_ROLLOUTS = 50  # number of rollouts per training iteration
-N_CPUS = 15  # number of parallel workers
+N_CPUS = 1  # number of parallel workers
 
 # Environment parameters
 HORIZON = 2000  # time horizon of a single rollout
@@ -24,12 +24,12 @@ SHORT_LENGTH = 300  # length of edges that vehicles start on
 N_LEFT, N_RIGHT, N_TOP, N_BOTTOM = 5, 5, 2, 2
 
 EDGE_INFLOW = 300  # inflow rate of vehicles at every edge
-NUM_AUTOMATED = 2
+NUM_AUTOMATED = 1
 AUTO_PLATOON = 1
 HUMAN_PLATOON = 1
 
 vehicles = VehicleParams()
-num_vehicles = 20
+num_vehicles = 2
 num_human = num_vehicles - NUM_AUTOMATED
 
 

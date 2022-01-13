@@ -12,7 +12,7 @@ from flow.envs.multiagent.traffic_grid import MultiTrafficGridPOEnv
 from flow.envs.multiagent.highway import MultiAgentHighwayPOEnv
 from flow.envs.multiagent.merge import MultiAgentMergePOEnv
 from flow.envs.multiagent.i210 import I210MultiEnv
-from flow.envs.multiagent.real_world_data import RealWorldPOEnv
+from flow.envs.multiagent.real_world_data import MultiRealWorldPOEnv
 __all__ = [
     'MultiEnv',
     'AdversarialAccelEnv',
@@ -23,5 +23,6 @@ __all__ = [
     'MultiAgentAccelPOEnv',
     'MultiAgentWaveAttenuationPOEnv',
     'MultiAgentMergePOEnv',
-    'I210MultiEnv'
+    'I210MultiEnv',
+    'MultiRealWorldPOEnv'
 ]

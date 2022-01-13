@@ -116,11 +116,7 @@ class RealWorldEnv(Env):
                 raise KeyError(
                     'Environment parameter "{}" not supplied'.format(p))
 
-        self.grid_array = network.net_params.additional_params["grid_array"]
-        self.rows = self.grid_array["row_num"]
-        self.cols = self.grid_array["col_num"]
-        # self.num_observed = self.grid_array.get("num_observed", 3)
-        self.num_traffic_lights = self.rows * self.cols
+
         self.tl_type = env_params.additional_params.get('tl_type')
 
         super().__init__(env_params, sim_params, network, simulator)
@@ -133,40 +129,6 @@ class RealWorldEnv(Env):
             'positions': np.zeros((self.steps, self.k.vehicle.num_vehicles))
         }
 
-        # Keeps track of the last time the traffic lights in an intersection
-        # were allowed to change (the last time the lights were allowed to
-        # change from a red-green state to a red-yellow state.)
-        self.last_change = np.zeros((self.rows * self.cols, 1))
-        # Keeps track of the direction of the intersection (the direction that
-        # is currently being allowed to flow. 0 indicates flow from top to
-        # bottom, and 1 indicates flow from left to right.)
-        self.direction = np.zeros((self.rows * self.cols, 1))
-        # Value of 1 indicates that the intersection is in a red-yellow state.
-        # value 0 indicates that the intersection is in a red-green state.
-        self.currently_yellow = np.zeros((self.rows * self.cols, 1))
-
-        # when this hits min_switch_time we change from yellow to red
-        # the second column indicates the direction that is currently being
-        # allowed to flow. 0 is flowing top to bottom, 1 is left to right
-        # For third column, 0 signifies yellow and 1 green or red
-        self.min_switch_time = env_params.additional_params["switch_time"]
-
-        if self.tl_type != "actuated":
-            for i in range(self.rows * self.cols):
-                self.k.traffic_light.set_state(
-                    node_id='center' + str(i), state="GrGr")
-                self.currently_yellow[i] = 0
-
-        # # Additional Information for Plotting
-        # self.edge_mapping = {"top": [], "bot": [], "right": [], "left": []}
-        # for i, veh_id in enumerate(self.k.vehicle.get_ids()):
-        #     edge = self.k.vehicle.get_edge(veh_id)
-        #     for key in self.edge_mapping:
-        #         if key in edge:
-        #             self.edge_mapping[key].append(i)
-        #             break
-
-        # check whether the action space is meant to be discrete or continuous
         self.discrete = env_params.additional_params.get("discrete", False)
 
     @property
@@ -182,46 +144,17 @@ class RealWorldEnv(Env):
     def observation_space(self):
         """Distance and speed to the coming intersection,
          the in-coming flow volume of each intersection path. """
-        return Box(low=0, high=1, shape=(6 , ), dtype=np.float32)
+        return Box(low=0, high=1, shape=(1 , ), dtype=np.float32)
 
     def get_state(self):
         """See class definition."""
         # compute the normalizers
-        grid_array = self.net_params.additional_params["grid_array"]
-        max_dist = max(grid_array["short_length"],
-                       grid_array["long_length"],
-                       grid_array["inner_length"])
+        pass
 
-        # get the state arrays
-        speeds = [
-            self.k.vehicle.get_speed(veh_id) / self.k.network.max_speed()
-            for veh_id in self.k.vehicle.get_ids()
-        ]
-        dist_to_intersec = [
-            self.get_distance_to_intersection(veh_id) / max_dist
-            for veh_id in self.k.vehicle.get_ids()
-        ]
-        edges = [
-            self._convert_edge(self.k.vehicle.get_edge(veh_id)) /
-            (self.k.network.network.num_edges - 1)
-            for veh_id in self.k.vehicle.get_ids()
-        ]
-
-        state = [
-            speeds, dist_to_intersec, edges,
-            self.last_change.flatten().tolist(),
-            self.direction.flatten().tolist(),
-            self.currently_yellow.flatten().tolist()
-        ]
-        return np.array(state)
 
     def _apply_rl_actions(self, rl_actions):
         """See class definition."""
-        sorted_rl_ids = [
-            veh_id for veh_id in self.sorted_ids
-            if veh_id in self.k.vehicle.get_rl_ids()
-        ]
-        self.k.vehicle.apply_acceleration(sorted_rl_ids, rl_actions)
+        pass
 
 
     def compute_reward(self, rl_actions, **kwargs):
@@ -585,82 +518,12 @@ class RealWorldPOEnv(RealWorldEnv):
         tl_box = Box(
             low=0.,
             high=3,
-            shape=(3 * 4 * self.num_observed * self.num_traffic_lights +
-                   2 * len(self.k.network.get_edge_list()) +
-                   3 * self.num_traffic_lights,),
+            shape=(1,),
             dtype=np.float32)
         return tl_box
 
     def get_state(self):
-        """See parent class.
-
-        Returns self.num_observed number of vehicles closest to each traffic
-        light and for each vehicle its velocity, distance to intersection,
-        edge_number traffic light state. This is partially observed
-        """
-        speeds = []
-        dist_to_intersec = []
-        edge_number = []
-        max_speed = max(
-            self.k.network.speed_limit(edge)
-            for edge in self.k.network.get_edge_list())
-        grid_array = self.net_params.additional_params["grid_array"]
-        max_dist = max(grid_array["short_length"], grid_array["long_length"],
-                       grid_array["inner_length"])
-        all_observed_ids = []
-
-        for _, edges in self.network.node_mapping:
-            for edge in edges:
-                observed_ids = \
-                    self.get_closest_to_intersection(edge, self.num_observed)
-                all_observed_ids += observed_ids
-
-                # check which edges we have so we can always pad in the right
-                # positions
-                speeds += [
-                    self.k.vehicle.get_speed(veh_id) / max_speed
-                    for veh_id in observed_ids
-                ]
-                dist_to_intersec += [
-                    (self.k.network.edge_length(
-                        self.k.vehicle.get_edge(veh_id)) -
-                        self.k.vehicle.get_position(veh_id)) / max_dist
-                    for veh_id in observed_ids
-                ]
-                edge_number += \
-                    [self._convert_edge(self.k.vehicle.get_edge(veh_id)) /
-                     (self.k.network.network.num_edges - 1)
-                     for veh_id in observed_ids]
-
-                if len(observed_ids) < self.num_observed:
-                    diff = self.num_observed - len(observed_ids)
-                    speeds += [0] * diff
-                    dist_to_intersec += [0] * diff
-                    edge_number += [0] * diff
-
-        # now add in the density and average velocity on the edges
-        density = []
-        velocity_avg = []
-        for edge in self.k.network.get_edge_list():
-            ids = self.k.vehicle.get_ids_by_edge(edge)
-            if len(ids) > 0:
-                vehicle_length = 5
-                density += [vehicle_length * len(ids) /
-                            self.k.network.edge_length(edge)]
-                velocity_avg += [np.mean(
-                    [self.k.vehicle.get_speed(veh_id) for veh_id in
-                     ids]) / max_speed]
-            else:
-                density += [0]
-                velocity_avg += [0]
-        self.observed_ids = all_observed_ids
-        return np.array(
-            np.concatenate([
-                speeds, dist_to_intersec, edge_number, density, velocity_avg,
-                self.last_change.flatten().tolist(),
-                self.direction.flatten().tolist(),
-                self.currently_yellow.flatten().tolist()
-            ]))
+        return np.array([0])
 
     def compute_reward(self, rl_actions, **kwargs):
         """See class definition."""
@@ -675,30 +538,3 @@ class RealWorldPOEnv(RealWorldEnv):
         # specify observed vehicles
         [self.k.vehicle.set_observed(veh_id) for veh_id in self.observed_ids]
 
-
-# class TrafficLightGridBenchmarkEnv(TrafficLightGridPOEnv):
-#     """Class used for the benchmarks in `Benchmarks for reinforcement learning inmixed-autonomy traffic`."""
-
-#     def compute_reward(self, rl_actions, **kwargs):
-#         """See class definition."""
-#         if self.env_params.evaluate:
-#             return - rewards.min_delay_unscaled(self)
-#         else:
-#             return rewards.desired_velocity(self)
-
-
-# class TrafficLightGridTestEnv(TrafficGridEnv):
-#     """
-#     Class for use in testing.
-
-#     This class overrides RL methods of traffic light grid so we can test
-#     construction without needing to specify RL methods
-#     """
-
-#     def _apply_rl_actions(self, rl_actions):
-#         """See class definition."""
-#         pass
-
-#     def compute_reward(self, rl_actions, **kwargs):
-#         """No return, for testing purposes."""
-#         return 0
