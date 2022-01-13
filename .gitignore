@@ -92,7 +92,6 @@ ENV/
 .vscode
 
 # Don't add xml/csv/png
-*.xml
 *.csv
 *.png
 .DS_Store

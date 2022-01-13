@@ -1,0 +1,131 @@
+<?xml version="1.0" ?>
+<additional>
+	<tlLogic id="332" type="actuated" programID="1" offset="0">
+		<param key="max-gap" value="1.0"/>
+		<param key="detector-gap" value="2.0"/>
+		<param key="passing-time" value="2.0"/>
+		<param key="vTypes" value=""/>
+		<param key="show-detectors" value="false"/>
+		<param key="file" value="NULL"/>
+		<param key="freq" value="300"/>
+		<phase duration="9.0" minDur="6.0" maxDur="12.0" state="rrrrrrrrGGrrrrrrGG"/>
+		<phase duration="3.0" state="rrrrrrrryyrrrrrryy"/>
+		<phase duration="2.0" state="rrrrrrrrrrrrrrrrrr"/>
+		<param key="max-gap" value="3.0"/>
+		<phase duration="30.5" minDur="15.0" maxDur="46.0" state="rrrrrGGGrrrrrGGGrr"/>
+		<phase duration="5.5" state="rrrrryyyrrrrryyyrr"/>
+		<phase duration="2.0" state="rrrrrrrrrrrrrrrrrr"/>
+		<param key="max-gap" value="5.0"/>
+		<phase duration="8.0" minDur="4.0" maxDur="12.0" state="rrrGGrrrrrrrGrrrrr"/>
+		<phase duration="3.0" state="rrryyrrrrrrryrrrrr"/>
+		<phase duration="2.0" state="rrrrrrrrrrrrrrrrrr"/>
+		<param key="max-gap" value="3.0"/>
+		<phase duration="18.0" minDur="4.0" maxDur="32.0" state="GGGrrrrrrrGGrrrrrr"/>
+		<phase duration="4.5" state="yyyrrrrrrryyrrrrrr"/>
+		<phase duration="2.0" state="rrrrrrrrrrrrrrrrrr"/>
+		<param key="max-gap" value="3.0"/>
+	</tlLogic>
+	<tlLogic id="334" type="actuated" programID="1" offset="0">
+		<param key="max-gap" value="1.0"/>
+		<param key="detector-gap" value="2.0"/>
+		<param key="passing-time" value="2.0"/>
+		<param key="vTypes" value=""/>
+		<param key="show-detectors" value="false"/>
+		<param key="file" value="NULL"/>
+		<param key="freq" value="300"/>
+		<phase duration="12.0" minDur="4.0" maxDur="20.0" state="rrrrrrGGrrrrrrGG"/>
+		<phase duration="5.5" state="rrrrrryyrrrrrryy"/>
+		<phase duration="2.0" state="rrrrrrrrrrrrrrrr"/>
+		<param key="max-gap" value="1.0"/>
+		<phase duration="34.5" minDur="20.0" maxDur="49.0" state="rrrGGGrrrrrGGGrr"/>
+		<phase duration="5.5" state="rrryyyrrrrryyyrr"/>
+		<phase duration="2.0" state="rrrrrrrrrrrrrrrr"/>
+		<param key="max-gap" value="5.0"/>
+		<phase duration="7.0" minDur="4.0" maxDur="10.0" state="rrGrrrrrrrGrrrrr"/>
+		<phase duration="3.0" state="rryrrrrrrryrrrrr"/>
+		<phase duration="2.0" state="rrrrrrrrrrrrrrrr"/>
+		<param key="max-gap" value="3.0"/>
+		<phase duration="13.0" minDur="6.0" maxDur="20.0" state="GGrrrrrrGGrrrrrr"/>
+		<phase duration="4.0" state="yyrrrrrryyrrrrrr"/>
+		<phase duration="2.0" state="rrrrrrrrrrrrrrrr"/>
+		<param key="max-gap" value="3.0"/>
+	</tlLogic>
+	<tlLogic id="229" type="actuated" programID="1" offset="0">
+		<param key="max-gap" value="1.0"/>
+		<param key="detector-gap" value="2.0"/>
+		<param key="passing-time" value="2.0"/>
+		<param key="vTypes" value=""/>
+		<param key="show-detectors" value="false"/>
+		<param key="file" value="NULL"/>
+		<param key="freq" value="300"/>
+		<phase duration="13.5" minDur="4.0" maxDur="23.0" state="rrrrrrrGGgrrrrrgrrrGG"/>
+		<phase duration="3.0" state="rrrrrrryygrrrrrgrrryy"/>
+		<phase duration="2.0" state="rrrrrrrrrgrrrrrgrrrrr"/>
+		<param key="max-gap" value="2.0"/>
+		<phase duration="42.5" minDur="20.0" maxDur="65.0" state="rrrrGGGrrgrrrrrgGGGrr"/>
+		<phase duration="5.5" state="rrrryyyrrgrrrrrgyyyrr"/>
+		<phase duration="2.0" state="rrrrrrrrrgrrrrrgrrrrr"/>
+		<param key="max-gap" value="3.0"/>
+		<phase duration="12.0" minDur="4.0" maxDur="20.0" state="rrGGrrrrrgrrrGGgrrrrr"/>
+		<phase duration="3.0" state="rryyrrrrrgrrryygrrrrr"/>
+		<phase duration="2.0" state="rrrrrrrrrgrrrrrgrrrrr"/>
+		<param key="max-gap" value="2.0"/>
+		<phase duration="17.0" minDur="4.0" maxDur="30.0" state="GGrrrrrrrgGGGrrgrrrrr"/>
+		<phase duration="4.5" state="yyrrrrrrrgyyyrrgrrrrr"/>
+		<phase duration="2.0" state="rrrrrrrrrgrrrrrgrrrrr"/>
+		<param key="max-gap" value="2.0"/>
+	</tlLogic>
+	<tlLogic id="499" type="actuated" programID="1" offset="0">
+		<param key="max-gap" value="1.0"/>
+		<param key="detector-gap" value="2.0"/>
+		<param key="passing-time" value="2.0"/>
+		<param key="vTypes" value=""/>
+		<param key="show-detectors" value="false"/>
+		<param key="file" value="NULL"/>
+		<param key="freq" value="300"/>
+		<phase duration="9.5" minDur="4.0" maxDur="15.0" state="rrrrrrrrGGrrrrrrrGG"/>
+		<phase duration="3.0" state="rrrrrrrryyrrrrrrryy"/>
+		<phase duration="2.0" state="rrrrrrrrrrrrrrrrrrr"/>
+		<param key="max-gap" value="3.0"/>
+		<phase duration="33.0" minDur="33.0" maxDur="33.0" state="rrrrrGGGrrrrrrGGGrr"/>
+		<phase duration="5.5" state="rrrrryyyrrrrrryyyrr"/>
+		<phase duration="2.0" state="rrrrrrrrrrrrrrrrrrr"/>
+		<param key="max-gap" value="5.0"/>
+		<phase duration="8.0" minDur="4.0" maxDur="12.0" state="rrrGGrrrrrrrrGrrrrr"/>
+		<phase duration="3.0" state="rrryyrrrrrrrryrrrrr"/>
+		<phase duration="2.0" state="rrrrrrrrrrrrrrrrrrr"/>
+		<param key="max-gap" value="3.0"/>
+		<phase duration="12.0" minDur="4.0" maxDur="20.0" state="GGGrrrrrrrGGGrrrrrr"/>
+		<phase duration="4.5" state="yyyrrrrrrryyyrrrrrr"/>
+		<phase duration="2.0" state="rrrrrrrrrrrrrrrrrrr"/>
+		<param key="max-gap" value="3.0"/>
+	</tlLogic>
+	<tlLogic id="140" type="actuated" programID="1" offset="0">
+		<param key="max-gap" value="2.0"/>
+		<param key="detector-gap" value="2.0"/>
+		<param key="passing-time" value="2.0"/>
+		<param key="vTypes" value=""/>
+		<param key="show-detectors" value="false"/>
+		<param key="file" value="NULL"/>
+		<param key="freq" value="300"/>
+		<phase duration="4" minDur="4" maxDur="10" state="grrrrrgrrrrrgGGGGGgrrrrr"/>
+		<phase duration="3.0" state="grrrrrgrrrrrgGGGyygrrrrr"/>
+		<phase duration="2.0" state="grrrrrgrrrrrgGGGrrgrrrrr"/>
+		<param key="max-gap" value="4.0"/>
+		<phase duration="5" minDur="5" maxDur="15" state="gGGGrrgrrrrrgGGGrrgrrrrr"/>
+		<phase duration="5.0" state="gGGGrrgrrrrrgyyyrrgrrrrr"/>
+		<phase duration="2.0" state="gGGGrrgrrrrrgrrrrrgrrrrr"/>
+		<param key="max-gap" value="2.0"/>
+		<phase duration="4" minDur="4" maxDur="10" state="gGGGGGgrrrrrgrrrrrgrrrrr"/>
+		<phase duration="5.0" state="gyyyyygrrrrrgrrrrrgrrrrr"/>
+		<phase duration="2.0" state="grrrrrgrrrrrgrrrrrgrrrrr"/>
+		<param key="max-gap" value="3.0"/>
+		<phase duration="4" minDur="4" maxDur="12" state="grrrrrgrrrGGgrrrrrgrrrGG"/>
+		<phase duration="5.0" state="grrrrrgrrryygrrrrrgrrryy"/>
+		<phase duration="2.0" state="grrrrrgrrrrrgrrrrrgrrrrr"/>
+		<param key="max-gap" value="3.0"/>
+		<phase duration="4" minDur="4" maxDur="25" state="grrrrrgGGGrrgrrrrrgGGGrr"/>
+		<phase duration="4.5" state="grrrrrgyyyrrgrrrrrgyyyrr"/>
+		<phase duration="2.0" state="grrrrrgrrrrrgrrrrrgrrrrr"/>
+	</tlLogic>
+</additional>
