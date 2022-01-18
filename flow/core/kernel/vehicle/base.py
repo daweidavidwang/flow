@@ -84,7 +84,7 @@ class KernelVehicle(object, metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def add(self, veh_id, type_id, edge, pos, lane, speed):
+    def add(self, veh_id, type_id, edge, pos, lane, speed, depart):
         """Add a vehicle to the network.
 
         Parameters

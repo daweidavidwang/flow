@@ -101,6 +101,27 @@ class GridRouter(BaseRouter):
         else:
             return None
 
+class RealDataRouter(BaseRouter):
+    """A router used real world data.
+
+    Usage
+    -----
+    See base class for usage example.
+    """
+
+    def choose_route(self, env):
+        """See parent class."""
+        current_edge=env.k.vehicle.get_edge(self.veh_id)
+        route_idx = -1
+        for idx in range(len(env.network.vehicles.vehicle_routing)):
+            if env.network.vehicles.vehicle_routing[idx]['id'] == self.veh_id:
+                route_idx = idx
+                break
+        for i in range(len(env.network.vehicles.vehicle_routing[idx]['route'])-1):
+            if current_edge == env.network.vehicles.vehicle_routing[idx]['route'][i]:
+                return env.network.vehicles.vehicle_routing[idx]['route']
+        return None
+
 
 class BayBridgeRouter(ContinuousRouter):
     """Assists in choosing routes in select cases for the Bay Bridge network.

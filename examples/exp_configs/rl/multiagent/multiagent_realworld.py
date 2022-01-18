@@ -6,7 +6,7 @@ from flow.networks import RealWorldNetwork
 from flow.core.params import SumoParams, EnvParams, InitialConfig, NetParams
 from flow.core.params import InFlows, SumoCarFollowingParams, VehicleParams
 from flow.controllers import SimCarFollowingController, GridRouter
-from flow.controllers import RLController, IDMController, ContinuousRouter
+from flow.controllers import RLController, IDMController, ContinuousRouter, RealDataRouter
 from ray.tune.registry import register_env
 from flow.utils.registry import make_create_env
 
@@ -32,38 +32,20 @@ vehicles = VehicleParams()
 num_vehicles = 2
 num_human = num_vehicles - NUM_AUTOMATED
 
+vehicles.load_from_xml('/headless/ray_results/flow/real_data/newroute1220_start0.xml')
 
-# Add one automated vehicle.
-vehicles.add(
-    veh_id="rl",
-    acceleration_controller=(RLController, {}),
-    # car_following_params=SumoCarFollowingParams(
-    #     min_gap=2.5,
-    #     max_speed=V_ENTER,
-    #     decel=7.5,  # avoid collisions at emergency stops
-    #     speed_mode="right_of_way",
-    # ),
-    routing_controller=(ContinuousRouter, {}),
-    num_vehicles=NUM_AUTOMATED)
-
-# Add a fraction of the remaining human vehicles.
-vehicles_to_add = num_human
-vehicles.add(
-    veh_id="human",
-    acceleration_controller=(IDMController, {}),
-    car_following_params=SumoCarFollowingParams(
-        min_gap=2.5,
-        max_speed=V_ENTER,
-        decel=7.5,  # avoid collisions at emergency stops
-        speed_mode="right_of_way",
-    ),
-    routing_controller=(ContinuousRouter, {}),
-    num_vehicles=num_human)
+for veh in vehicles.vehicle_routing:
+    vehicles.add(
+        veh_id=veh['id'],
+        acceleration_controller=(IDMController, {}),
+        routing_controller=(RealDataRouter, {}),
+        depart=veh['depart'],
+        num_vehicles=1)
 
 
 flow_params = dict(
     # name of the experiment
-    exp_tag="realworld_0_{}x{}_i{}_multiagent",
+    exp_tag="realworld_multiagent",
 
     # name of the flow environment the experiment is running on
     env_name=MultiRealWorldPOEnv,
@@ -72,7 +54,7 @@ flow_params = dict(
     network=RealWorldNetwork,
 
     # simulator that is used by the experiment
-    simulator='traci',
+    simulator='traci_rd',
 
     # sumo-related parameters (see flow.core.params.SumoParams)
     sim=SumoParams(
@@ -124,7 +106,7 @@ flow_params = dict(
     # or reset (see flow.core.params.InitialConfig)
     initial=InitialConfig(
         spacing='custom',
-        shuffle=True,
+        shuffle=False,
     ),
 )
 

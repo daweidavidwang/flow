@@ -374,7 +374,7 @@ class AimsunKernelVehicle(KernelVehicle):
         # make sure that the order of rl_ids is kept sorted
         self.__rl_ids.sort()
 
-    def add(self, veh_id, type_id, edge, pos, lane, speed):
+    def add(self, veh_id, type_id, edge, pos, lane, speed, depart='now'):
         """See parent class."""
         self.num_vehicles += 1
         self.__ids.append(veh_id)

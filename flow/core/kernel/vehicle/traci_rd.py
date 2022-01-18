@@ -26,7 +26,7 @@ color_bins = [[int(255 - rdelta * i), int(rdelta * i), 0] for i in
               range(STEPS + 1)]
 
 
-class TraCIVehicle(KernelVehicle):
+class TraCIRDVehicle(KernelVehicle):
     """Flow kernel for the TraCI API.
 
     Extends flow.core.kernel.vehicle.base.KernelVehicle
@@ -1013,8 +1013,11 @@ class TraCIVehicle(KernelVehicle):
 
         for i, veh_id in enumerate(veh_ids):
             if route_choices[i] is not None:
-                self.kernel_api.vehicle.setRoute(
-                    vehID=veh_id, edgeList=route_choices[i])
+                try:
+                    self.kernel_api.vehicle.setRoute(
+                        vehID=veh_id, edgeList=route_choices[i])
+                except:
+                    self.remove(veh_id)
 
     def get_x_by_id(self, veh_id):
         """See parent class."""
@@ -1099,7 +1102,7 @@ class TraCIVehicle(KernelVehicle):
         self.kernel_api.vehicle.setColor(
             vehID=veh_id, color=(r, g, b, 255))
 
-    def add(self, veh_id, type_id, edge, pos, lane, speed, depart='now'):
+    def add(self, veh_id, type_id, edge, pos, lane, speed, depart):
         """See parent class."""
         if veh_id in self.master_kernel.network.rts:
             # If the vehicle has its own route, use that route. This is used in
@@ -1114,6 +1117,7 @@ class TraCIVehicle(KernelVehicle):
         self.kernel_api.vehicle.addFull(
             veh_id,
             route_id,
+            depart=str(depart),
             typeID=str(type_id),
             departLane=str(lane),
             departPos=str(pos),

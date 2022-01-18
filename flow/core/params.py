@@ -253,6 +253,23 @@ class VehicleParams:
         #: purposes
         self.initial = []
 
+        self.vehicle_routing = []
+
+    def load_from_xml(self,
+                    xml_dir):
+        import xml.etree.ElementTree as ElementTree
+        from lxml import etree
+        parser = etree.XMLParser(recover=True)
+        tree = ElementTree.parse(xml_dir, parser=parser)
+        root = tree.getroot()
+        for veh in root.findall('vehicle'):
+            veh_info = {
+                "id": veh.attrib['id'],
+                "depart":veh.attrib['depart'],
+                "route":veh.find('route').attrib['edges'].split(" ")
+            }
+            self.vehicle_routing.append(veh_info)
+
     def add(self,
             veh_id,
             acceleration_controller=(SimCarFollowingController, {}),
@@ -260,6 +277,7 @@ class VehicleParams:
             routing_controller=None,
             initial_speed=0,
             num_vehicles=0,
+            depart='now',
             car_following_params=None,
             lane_change_params=None,
             color=None):
@@ -334,7 +352,9 @@ class VehicleParams:
             "car_following_params":
                 car_following_params,
             "lane_change_params":
-                lane_change_params
+                lane_change_params,
+            "depart":
+                depart
         })
 
         # This is used to return the actual headways from the vehicles class.

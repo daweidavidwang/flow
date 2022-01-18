@@ -1,11 +1,11 @@
 """Script containing the Flow kernel object for interacting with simulators."""
 
 import warnings
-from flow.core.kernel.simulation import TraCISimulation, AimsunKernelSimulation
-from flow.core.kernel.network import TraCIKernelNetwork, AimsunKernelNetwork
-from flow.core.kernel.vehicle import TraCIVehicle, AimsunKernelVehicle
+from flow.core.kernel.simulation import TraCISimulation,TraCIRDSimulation, AimsunKernelSimulation
+from flow.core.kernel.network import TraCIKernelNetwork,TraCIRDKernelNetwork, AimsunKernelNetwork
+from flow.core.kernel.vehicle import TraCIVehicle,TraCIRDVehicle, AimsunKernelVehicle
 from flow.core.kernel.traffic_light import TraCITrafficLight, \
-    AimsunKernelTrafficLight
+    AimsunKernelTrafficLight, TraCIRDTrafficLight
 from flow.utils.exceptions import FatalFlowError
 
 
@@ -67,6 +67,11 @@ class Kernel(object):
             self.network = TraCIKernelNetwork(self, sim_params)
             self.vehicle = TraCIVehicle(self, sim_params)
             self.traffic_light = TraCITrafficLight(self)
+        elif simulator == "traci_rd":
+            self.simulation = TraCIRDSimulation(self)
+            self.network = TraCIRDKernelNetwork(self, sim_params)
+            self.vehicle = TraCIRDVehicle(self, sim_params)
+            self.traffic_light = TraCIRDTrafficLight(self)
         elif simulator == 'aimsun':
             self.simulation = AimsunKernelSimulation(self)
             self.network = AimsunKernelNetwork(self, sim_params)

@@ -114,7 +114,7 @@ class RealWorldNetwork(Network):
                  traffic_lights=TrafficLightParams()):
         """Initialize an n*m traffic light grid network."""
 
-        net_params = NetParams(template='/headless/code/flow/networks/CSeditClean_1.net.xml')
+        net_params = NetParams(template='/headless/ray_results/flow/real_data/CSeditClean_1.net.xml')
 
         # name of the network (DO NOT CHANGE)
         self.name = "BobLoblawsLawBlog"
@@ -127,10 +127,8 @@ class RealWorldNetwork(Network):
         routes = defaultdict(list)
 
         # build row routes (vehicles go from left to right and vice versa)
-        routes = {
-            "229357869#2": ["229357869#2", "229357869#3", "229357869#4", "229488615#0", "229488615#1", "978613906", "978613911", "718258618#0", "718258618#1"],
-            "36978229#3": ["36978229#3", "36978229#4", "36978229#5", "36978229#6", "878066809#0", "878066809#1", "877763357#0", "877763357#1", "877763357#2"]
-        }
+        for veh in self.vehicles.vehicle_routing:
+            routes[str(veh['route'][0])] = veh['route']
 
         return routes
 

@@ -82,6 +82,7 @@ class MultiEnv(MultiAgentEnv, Env):
                     routing_ids.append(veh_id)
                     route_contr = self.k.vehicle.get_routing_controller(veh_id)
                     routing_actions.append(route_contr.choose_route(self))
+
             self.k.vehicle.choose_routes(routing_ids, routing_actions)
 
             self.apply_rl_actions(rl_actions)
@@ -209,31 +210,42 @@ class MultiEnv(MultiAgentEnv, Env):
         self.k.vehicle.reset()
 
         # reintroduce the initial vehicles to the network
-        for veh_id in self.initial_ids:
-            type_id, edge, lane_index, pos, speed = \
-                self.initial_state[veh_id]
+        if self.simulator == 'traci_rd':
+             for veh in self.network.vehicles.vehicle_routing:
+                self.k.vehicle.add(
+                    veh_id=veh['id'],
+                    type_id=veh['id'],
+                    edge=veh['route'][0],
+                    lane='random',
+                    pos='0',
+                    speed='0',
+                    depart=str(veh['depart']))        
+        else:
+            for veh_id in self.initial_ids:
+                type_id, edge, lane_index, pos, speed = \
+                    self.initial_state[veh_id]
 
-            try:
-                self.k.vehicle.add(
-                    veh_id=veh_id,
-                    type_id=type_id,
-                    edge=edge,
-                    lane=lane_index,
-                    pos=pos,
-                    speed=speed)
-            except (FatalTraCIError, TraCIException):
-                # if a vehicle was not removed in the first attempt, remove it
-                # now and then reintroduce it
-                self.k.vehicle.remove(veh_id)
-                if self.simulator == 'traci':
-                    self.k.kernel_api.vehicle.remove(veh_id)  # FIXME: hack
-                self.k.vehicle.add(
-                    veh_id=veh_id,
-                    type_id=type_id,
-                    edge=edge,
-                    lane=lane_index,
-                    pos=pos,
-                    speed=speed)
+                try:
+                    self.k.vehicle.add(
+                        veh_id=veh_id,
+                        type_id=type_id,
+                        edge=edge,
+                        lane=lane_index,
+                        pos=pos,
+                        speed=speed)
+                except (FatalTraCIError, TraCIException):
+                    # if a vehicle was not removed in the first attempt, remove it
+                    # now and then reintroduce it
+                    self.k.vehicle.remove(veh_id)
+                    if self.simulator == 'traci':
+                        self.k.kernel_api.vehicle.remove(veh_id)  # FIXME: hack
+                    self.k.vehicle.add(
+                        veh_id=veh_id,
+                        type_id=type_id,
+                        edge=edge,
+                        lane=lane_index,
+                        pos=pos,
+                        speed=speed)
 
         # advance the simulation in the simulator by one step
         self.k.simulation.simulation_step()

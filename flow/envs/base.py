@@ -190,8 +190,9 @@ class Env(gym.Env, metaclass=ABCMeta):
         self.initial_vehicles = deepcopy(self.k.vehicle)
         self.k.vehicle.kernel_api = self.k.kernel_api
         self.k.vehicle.master_kernel = self.k
-
-        self.setup_initial_state()
+        
+        if self.simulator != 'traci_rd':
+            self.setup_initial_state()
 
         # use pyglet to render the simulation
         if self.sim_params.render in ['gray', 'dgray', 'rgb', 'drgb']:
@@ -248,7 +249,7 @@ class Env(gym.Env, metaclass=ABCMeta):
         self.k.close()
 
         # killed the sumo process if using sumo/TraCI
-        if self.simulator == 'traci':
+        if self.simulator == 'traci' or self.simulator == 'traci_rd':
             self.k.simulation.sumo_proc.kill()
 
         if render is not None:
@@ -264,7 +265,8 @@ class Env(gym.Env, metaclass=ABCMeta):
             network=self.k.network, sim_params=self.sim_params)
         self.k.pass_api(kernel_api)
 
-        self.setup_initial_state()
+        if self.simulator != "traci_rd":
+            self.setup_initial_state()
 
     def setup_initial_state(self):
         """Store information on the initial state of vehicles in the network.
@@ -469,7 +471,7 @@ class Env(gym.Env, metaclass=ABCMeta):
             self.setup_initial_state()
 
         # clear all vehicles from the network and the vehicles class
-        if self.simulator == 'traci':
+        if self.simulator == 'traci' or self.simulator == 'traci_rd':
             for veh_id in self.k.kernel_api.vehicle.getIDList():  # FIXME: hack
                 try:
                     self.k.vehicle.remove(veh_id)
@@ -492,31 +494,42 @@ class Env(gym.Env, metaclass=ABCMeta):
         self.k.vehicle.reset()
 
         # reintroduce the initial vehicles to the network
-        for veh_id in self.initial_ids:
-            type_id, edge, lane_index, pos, speed = \
-                self.initial_state[veh_id]
+        if self.simulator == 'traci_rd':
+             for veh in self.network.vehicles:
+                self.k.vehicle.add(
+                    veh_id=veh['id'],
+                    type_id=veh['id'],
+                    edge=veh['route'][0],
+                    lane='random',
+                    pos='0',
+                    speed='0',
+                    depart=str(veh['depart']))
+        else:
+            for veh_id in self.initial_ids:
+                type_id, edge, lane_index, pos, speed = \
+                    self.initial_state[veh_id]
 
-            try:
-                self.k.vehicle.add(
-                    veh_id=veh_id,
-                    type_id=type_id,
-                    edge=edge,
-                    lane=lane_index,
-                    pos=pos,
-                    speed=speed)
-            except (FatalTraCIError, TraCIException):
-                # if a vehicle was not removed in the first attempt, remove it
-                # now and then reintroduce it
-                self.k.vehicle.remove(veh_id)
-                if self.simulator == 'traci':
-                    self.k.kernel_api.vehicle.remove(veh_id)  # FIXME: hack
-                self.k.vehicle.add(
-                    veh_id=veh_id,
-                    type_id=type_id,
-                    edge=edge,
-                    lane=lane_index,
-                    pos=pos,
-                    speed=speed)
+                try:
+                    self.k.vehicle.add(
+                        veh_id=veh_id,
+                        type_id=type_id,
+                        edge=edge,
+                        lane=lane_index,
+                        pos=pos,
+                        speed=speed)
+                except (FatalTraCIError, TraCIException):
+                    # if a vehicle was not removed in the first attempt, remove it
+                    # now and then reintroduce it
+                    self.k.vehicle.remove(veh_id)
+                    if self.simulator == 'traci':
+                        self.k.kernel_api.vehicle.remove(veh_id)  # FIXME: hack
+                    self.k.vehicle.add(
+                        veh_id=veh_id,
+                        type_id=type_id,
+                        edge=edge,
+                        lane=lane_index,
+                        pos=pos,
+                        speed=speed)
 
         # advance the simulation in the simulator by one step
         self.k.simulation.simulation_step()
@@ -528,7 +541,7 @@ class Env(gym.Env, metaclass=ABCMeta):
         if self.sim_params.render:
             self.k.vehicle.update_vehicle_colors()
 
-        if self.simulator == 'traci':
+        if self.simulator == 'traci' or self.simulator == 'traci_rd':
             initial_ids = self.k.kernel_api.vehicle.getIDList()
         else:
             initial_ids = self.initial_ids
