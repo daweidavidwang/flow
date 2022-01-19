@@ -6,7 +6,7 @@ from flow.networks import RealWorldNetwork
 from flow.core.params import SumoParams, EnvParams, InitialConfig, NetParams
 from flow.core.params import InFlows, SumoCarFollowingParams, VehicleParams
 from flow.controllers import SimCarFollowingController, GridRouter
-from flow.controllers import RLController, IDMController, ContinuousRouter, RealDataRouter
+from flow.controllers import RLController, IDMController, ContinuousRouter, RealDataRouter,RoutingLaneChanger, LCIDMController
 from ray.tune.registry import register_env
 from flow.utils.registry import make_create_env
 
@@ -15,7 +15,7 @@ N_ROLLOUTS = 50  # number of rollouts per training iteration
 N_CPUS = 1  # number of parallel workers
 
 # Environment parameters
-HORIZON = 2000  # time horizon of a single rollout
+HORIZON = 20000  # time horizon of a single rollout
 V_ENTER = 30  # enter speed for departing vehicles
 INNER_LENGTH = 300  # length of inner edges in the traffic light grid network
 LONG_LENGTH = 100  # length of final edge in route
@@ -37,7 +37,8 @@ vehicles.load_from_xml('/headless/ray_results/flow/real_data/newroute1220_start0
 for veh in vehicles.vehicle_routing:
     vehicles.add(
         veh_id=veh['id'],
-        acceleration_controller=(IDMController, {}),
+        acceleration_controller=(LCIDMController, {}),
+        lane_change_controller=(RoutingLaneChanger, {}),
         routing_controller=(RealDataRouter, {}),
         depart=veh['depart'],
         num_vehicles=1)

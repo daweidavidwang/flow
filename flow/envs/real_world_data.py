@@ -130,7 +130,8 @@ class RealWorldEnv(Env):
         }
 
         self.discrete = env_params.additional_params.get("discrete", False)
-
+        self.k.network.network.compute_best_lane(self.k.network)
+        
     @property
     def action_space(self):
         """See class definition."""

@@ -412,6 +412,137 @@ class LinearOVM(BaseController):
         return (v_h - this_vel) / self.adaptation
 
 
+class LCIDMController(BaseController):
+    """lane changing with Intelligent Driver Model (IDM) controller.
+
+    For more information on this controller, see:
+    Treiber, Martin, Ansgar Hennecke, and Dirk Helbing. "Congested traffic
+    states in empirical observations and microscopic simulations." Physical
+    review E 62.2 (2000): 1805.
+
+    Usage
+    -----
+    See BaseController for usage example.
+
+    Attributes
+    ----------
+    veh_id : str
+        Vehicle ID for SUMO identification
+    car_following_params : flow.core.param.SumoCarFollowingParams
+        see parent class
+    v0 : float
+        desirable velocity, in m/s (default: 30)
+    T : float
+        safe time headway, in s (default: 1)
+    a : float
+        max acceleration, in m/s2 (default: 1)
+    b : float
+        comfortable deceleration, in m/s2 (default: 1.5)
+    delta : float
+        acceleration exponent (default: 4)
+    s0 : float
+        linear jam distance, in m (default: 2)
+    noise : float
+        std dev of normal perturbation to the acceleration (default: 0)
+    fail_safe : str
+        type of flow-imposed failsafe the vehicle should posses, defaults
+        to no failsafe (None)
+    """
+
+    def __init__(self,
+                 veh_id,
+                 v0=30,
+                 T=1,
+                 a=1,
+                 b=1.5,
+                 delta=4,
+                 s0=2,
+                 time_delay=0.0,
+                 noise=0,
+                 fail_safe=None,
+                 display_warnings=True,
+                 car_following_params=None):
+        """Instantiate an IDM controller."""
+        BaseController.__init__(
+            self,
+            veh_id,
+            car_following_params,
+            delay=time_delay,
+            fail_safe=fail_safe,
+            noise=noise,
+            display_warnings=display_warnings,
+        )
+        self.v0 = v0
+        self.T = T
+        self.a = a
+        self.b = b
+        self.delta = delta
+        self.s0 = s0
+
+    def get_accel(self, env):
+        """See parent class."""
+        v = env.k.vehicle.get_speed(self.veh_id)
+        lead_id = env.k.vehicle.get_leader(self.veh_id)
+        h = env.k.vehicle.get_headway(self.veh_id)
+
+        # in order to deal with ZeroDivisionError
+        if abs(h) < 1e-3:
+            h = 1e-3
+
+        if lead_id is None or lead_id == '':  # no car ahead
+            s_star = 0
+        else:
+            lead_vel = env.k.vehicle.get_speed(lead_id)
+            s_star = self.s0 + max(
+                0, v * self.T + v * (v - lead_vel) /
+                (2 * np.sqrt(self.a * self.b)))
+
+        ## check wether the vehicle is in the right way, if not, emergency stop and wait for lane changing
+        route_contr = env.k.vehicle.get_routing_controller(
+                        self.veh_id)
+        current_lane = env.k.vehicle.get_lane(self.veh_id)
+        current_edge = env.k.vehicle.get_edge(self.veh_id)
+        routing_result = route_contr.choose_route(env)
+
+
+        #resolve needed lane idx
+        if routing_result is None or current_edge != routing_result[0]:
+            ## normally run
+            return self.a * (1 - (v / self.v0)**self.delta - (s_star / h)**2)
+        else:
+            current_conn = env.k.network.next_edge(current_edge, current_lane)
+
+            for edge, lane in current_conn:
+                if edge == routing_result[1]:
+                    # no lane changing needed
+                    return self.a * (1 - (v / self.v0)**self.delta - (s_star / h)**2)
+                if edge[0] == ":":
+                    #if the connection connect to a "via", we further query it
+                    via_conn = env.k.network.next_edge(edge, lane)
+                    if len(via_conn)>0:
+                        for vedge, vlane in via_conn:
+                            if vedge == routing_result[1]:
+                                return self.a * (1 - (v / self.v0)**self.delta - (s_star / h)**2)
+
+            ## not in the right lane, we need to check the dist to the intersection
+            edge_id = env.k.vehicle.get_edge(self.veh_id)
+            # skip intersection
+            if edge_id[0] == ":":
+                return self.a * (1 - (v / self.v0)**self.delta - (s_star / h)**2)
+
+            edge_len = env.k.network.edge_length(edge_id)
+            relative_pos = env.k.vehicle.get_position(self.veh_id)
+            dist = edge_len - relative_pos
+
+            ## too close to the intersection!!!!
+            if dist<5:
+                return -10
+            else:
+                return self.a * (1 - (v / self.v0)**self.delta - (s_star / h)**2)
+
+            
+
+        
 class IDMController(BaseController):
     """Intelligent Driver Model (IDM) controller.
 

@@ -114,7 +114,7 @@ class RealWorldNetwork(Network):
                  traffic_lights=TrafficLightParams()):
         """Initialize an n*m traffic light grid network."""
 
-        net_params = NetParams(template='/headless/ray_results/flow/real_data/CSeditClean_1.net.xml')
+        net_params = NetParams(template='/headless/ray_results/flow/real_data/CSeditClean_1.net_TLRemoved.xml')
 
         # name of the network (DO NOT CHANGE)
         self.name = "BobLoblawsLawBlog"
@@ -140,3 +140,20 @@ class RealWorldNetwork(Network):
 
 
         return startpositions, startlanes
+
+    def compute_best_lane(self, kernel_net):
+        """ to add the best lane candidiates in vehicles (flow.core.params.VehicleParams)"""
+        for idx in range(len(self.vehicles.vehicle_routing)):
+            routes = self.vehicles.vehicle_routing[idx]['route']
+            candidate_lane = []
+            candidate_lane.append([i for i in range(kernel_net.num_lanes(routes[len(routes)-1]))])
+            for edge_idx in (len(routes)-2, -1, -1):
+                can = []
+                for last_lane_id in candidate_lane[-1]:
+                    res = kernel_net.prev_edge(routes[edge_idx+1], last_lane_id)
+                    for edge, lane in res:
+                        if edge == routes[edge_idx]:
+                            can.extend(lane)
+                can.sort()
+                candidate_lane.append(list(set(can)))
+            self.vehicles.vehicle_routing[idx]['can_lane'] = candidate_lane.reverse()

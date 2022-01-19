@@ -119,7 +119,7 @@ class RealDataRouter(BaseRouter):
                 break
         for i in range(len(env.network.vehicles.vehicle_routing[idx]['route'])-1):
             if current_edge == env.network.vehicles.vehicle_routing[idx]['route'][i]:
-                return env.network.vehicles.vehicle_routing[idx]['route']
+                return env.network.vehicles.vehicle_routing[idx]['route'][i:]
         return None
 
 

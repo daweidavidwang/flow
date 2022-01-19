@@ -978,6 +978,7 @@ class TraCIRDVehicle(KernelVehicle):
             direction = [direction]
 
         # if any of the directions are not -1, 0, or 1, raise a ValueError
+        # print(str(direction))
         if any(d not in [-1, 0, 1] for d in direction):
             raise ValueError(
                 "Direction values for lane changes may only be: -1, 0, or 1.")
@@ -1013,11 +1014,11 @@ class TraCIRDVehicle(KernelVehicle):
 
         for i, veh_id in enumerate(veh_ids):
             if route_choices[i] is not None:
-                try:
-                    self.kernel_api.vehicle.setRoute(
-                        vehID=veh_id, edgeList=route_choices[i])
-                except:
-                    self.remove(veh_id)
+                # try:
+                self.kernel_api.vehicle.setRoute(
+                    vehID=veh_id, edgeList=route_choices[i])
+                # except:
+                #     self.remove(veh_id)
 
     def get_x_by_id(self, veh_id):
         """See parent class."""
