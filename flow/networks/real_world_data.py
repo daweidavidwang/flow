@@ -6,6 +6,7 @@ from flow.core.params import TrafficLightParams
 from flow.core.params import NetParams
 from collections import defaultdict
 import numpy as np
+import _thread
 
 ADDITIONAL_NET_PARAMS = {
     # dictionary of traffic light grid array data
@@ -141,19 +142,64 @@ class RealWorldNetwork(Network):
 
         return startpositions, startlanes
 
-    def compute_best_lane(self, kernel_net):
+    def compute_best_lane(self, kernel_net, num_cpu):
         """ to add the best lane candidiates in vehicles (flow.core.params.VehicleParams)"""
-        for idx in range(len(self.vehicles.vehicle_routing)):
-            routes = self.vehicles.vehicle_routing[idx]['route']
-            candidate_lane = []
-            candidate_lane.append([i for i in range(kernel_net.num_lanes(routes[len(routes)-1]))])
-            for edge_idx in (len(routes)-2, -1, -1):
-                can = []
-                for last_lane_id in candidate_lane[-1]:
-                    res = kernel_net.prev_edge(routes[edge_idx+1], last_lane_id)
-                    for edge, lane in res:
-                        if edge == routes[edge_idx]:
-                            can.extend(lane)
-                can.sort()
-                candidate_lane.append(list(set(can)))
-            self.vehicles.vehicle_routing[idx]['can_lane'] = candidate_lane.reverse()
+        def _seg_compute(ind_a, ind_len, kernel_net):
+            for idx in range(ind_a, ind_a + ind_len):
+                routes = self.vehicles.vehicle_routing[idx]['route']
+                candidate_lane = []
+                candidate_lane.append([i for i in range(kernel_net.num_lanes(routes[len(routes)-1]))])
+                for edge_idx in range(len(routes)-2, -1, -1):
+                    can = []
+                    for last_lane_id in candidate_lane[-1]:
+                        res = kernel_net.prev_edge(routes[edge_idx+1], last_lane_id)
+                        for edge, lane in res: 
+                            if edge[0] == ":":
+                                res.extend(kernel_net.prev_edge(edge, lane))
+                        # print(str(res))
+                        # print(routes[edge_idx])
+                        for edge, lane in res:
+                            if edge == routes[edge_idx]:
+                                can.extend([lane])
+                    can.sort()
+                    candidate_lane.append(list(set(can)))
+                candidate_lane.reverse()
+                # print(str(routes))
+                # print(str(candidate_lane))
+                self.vehicles.vehicle_routing[idx]['can_lane'] = candidate_lane
+            _thread.exit()
+
+        for k in range(num_cpu):
+            if k < num_cpu - 1:
+                ind_len = int(len(self.vehicles.vehicle_routing) / num_cpu)
+                ind_a = k * ind_len
+            else:
+                ind_len = len(self.vehicles.vehicle_routing) - int(len(self.vehicles.vehicle_routing) / num_cpu) * (num_cpu - 1)
+                ind_a = len(self.vehicles.vehicle_routing) - ind_len
+            _thread.start_new_thread(_seg_compute,
+                                     (ind_a, ind_len, kernel_net))
+
+
+        # single thread version
+        # for idx in range(len(self.vehicles.vehicle_routing)):
+        #     routes = self.vehicles.vehicle_routing[idx]['route']
+        #     candidate_lane = []
+        #     candidate_lane.append([i for i in range(kernel_net.num_lanes(routes[len(routes)-1]))])
+        #     for edge_idx in range(len(routes)-2, -1, -1):
+        #         can = []
+        #         for last_lane_id in candidate_lane[-1]:
+        #             res = kernel_net.prev_edge(routes[edge_idx+1], last_lane_id)
+        #             for edge, lane in res: 
+        #                 if edge[0] == ":":
+        #                     res.extend(kernel_net.prev_edge(edge, lane))
+        #             # print(str(res))
+        #             # print(routes[edge_idx])
+        #             for edge, lane in res:
+        #                 if edge == routes[edge_idx]:
+        #                     can.extend([lane])
+        #         can.sort()
+        #         candidate_lane.append(list(set(can)))
+        #     candidate_lane.reverse()
+        #     # print(str(routes))
+        #     # print(str(candidate_lane))
+        #     self.vehicles.vehicle_routing[idx]['can_lane'] = candidate_lane
