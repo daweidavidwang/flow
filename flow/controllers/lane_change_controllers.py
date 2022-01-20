@@ -81,7 +81,10 @@ class RoutingLaneChanger(BaseLaneChangeController):
         route_contr = env.k.vehicle.get_routing_controller(
                 self.veh_id)
         routing_result = route_contr.choose_route(env)
-        can_lane_list = compute_can_list(env)
+
+        # two step look can list.
+        # can_lane_list = compute_can_list(env)
+
         # for idx in range(len(env.network.vehicles.vehicle_routing)):
         #     if env.network.vehicles.vehicle_routing[idx]['id'] == self.veh_id:
         #         for ridx in range(len(env.network.vehicles.vehicle_routing[idx]['route'])):
@@ -90,18 +93,18 @@ class RoutingLaneChanger(BaseLaneChangeController):
         #                 break                        
         #         break
         ## if can lane list exist, we first use it to make decision
-        if len(can_lane_list)>0:
-            if current_lane in can_lane_list:
-                return 0
-            else:
-                closest = 1000
-                for lid in can_lane_list:
-                    if abs(closest)> abs(lid-current_lane):
-                        closest = lid-current_lane
-                if closest>0:
-                    return 1
-                else:
-                    return -1
+        # if len(can_lane_list)>0:
+        #     if current_lane in can_lane_list:
+        #         return 0
+        #     else:
+        #         closest = 1000
+        #         for lid in can_lane_list:
+        #             if abs(closest)> abs(lid-current_lane):
+        #                 closest = lid-current_lane
+        #         if closest>0:
+        #             return 1
+        #         else:
+        #             return -1
                 
         # one step look version
 
