@@ -254,7 +254,13 @@ class VehicleParams:
         self.initial = []
 
         self.vehicle_routing = []
+        
+        ## junction 499 332 229
+        self.selected_intersection = ["499"]
 
+        # remove x of total_vehicle
+        self.sparsing_traffic = 0.5
+        
     def load_from_xml(self,
                     xml_dir):
         import xml.etree.ElementTree as ElementTree

@@ -11,11 +11,11 @@ from ray.tune.registry import register_env
 from flow.utils.registry import make_create_env
 
 # Experiment parameters
-N_ROLLOUTS = 50  # number of rollouts per training iteration
+N_ROLLOUTS = 500  # number of rollouts per training iteration
 N_CPUS = 1  # number of parallel workers
 
 # Environment parameters
-HORIZON = 2000  # time horizon of a single rollout
+HORIZON = 20000  # time horizon of a single rollout
 V_ENTER = 30  # enter speed for departing vehicles
 INNER_LENGTH = 300  # length of inner edges in the traffic light grid network
 LONG_LENGTH = 100  # length of final edge in route

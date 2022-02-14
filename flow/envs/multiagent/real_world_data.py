@@ -7,7 +7,7 @@ through an n x m traffic light grid.
 import numpy as np
 from gym.spaces.box import Box
 from gym.spaces.discrete import Discrete
-
+from copy import deepcopy
 from flow.core import rewards
 from flow.envs.real_world_data import RealWorldPOEnv
 from flow.envs.multiagent import MultiEnv
@@ -41,7 +41,7 @@ class MultiRealWorldPOEnv(RealWorldPOEnv, MultiEnv):
         See parent class
     """
 
-    def __init__(self, env_params, sim_params, network, simulator='traci'):
+    def __init__(self, env_params, sim_params, network, simulator='traci_rd'):
         super().__init__(env_params, sim_params, network, simulator)
 
         for p in ADDITIONAL_ENV_PARAMS.keys():
@@ -49,6 +49,13 @@ class MultiRealWorldPOEnv(RealWorldPOEnv, MultiEnv):
                 raise KeyError(
                     'Environment parameter "{}" not supplied'.format(p))
 
+        if len(self.network.vehicles.selected_intersection) > 0:
+            self.select_vehicles()
+            ## re-do kernel vehicle initialize after selection of vehicles
+            # initial the vehicles kernel using the VehicleParams object
+            self.k.vehicle.initialize(deepcopy(self.network.vehicles))
+            # store the initial vehicle ids
+            self.initial_ids = deepcopy(self.network.vehicles.ids)
 
     @property
     def observation_space(self):
@@ -71,6 +78,35 @@ class MultiRealWorldPOEnv(RealWorldPOEnv, MultiEnv):
             high=self.env_params.additional_params["max_accel"],
             shape=(1, ),
             dtype=np.float32)
+
+    def select_vehicles(self):
+        from flow.core.params import VehicleParams
+        from flow.controllers import RealDataRouter,RoutingLaneChanger, LCIDMController
+        infected_list = []
+        for junction_id in self.network.vehicles.selected_intersection:
+            infected_list.extend(self.k.network.get_incedge(junction_id))
+        routing = deepcopy(self.network.vehicles.vehicle_routing)
+        for idx in range(len(routing)-1, -1, -1):
+            match = set(routing[idx]['route']) & set(infected_list)
+            if len(match) == 0:
+                del routing[idx]
+        
+        current_vehicle_num = len(routing)
+        while len(routing)>(1-self.network.vehicles.sparsing_traffic)*current_vehicle_num:
+            rand_idx = np.random.randint(len(routing))
+            del routing[rand_idx]
+
+        new_vehicles = VehicleParams()
+        new_vehicles.vehicle_routing = deepcopy(routing)
+        for veh in new_vehicles.vehicle_routing:
+            new_vehicles.add(
+                veh_id=veh['id'],
+                acceleration_controller=(LCIDMController, {}),
+                lane_change_controller=(RoutingLaneChanger, {}),
+                routing_controller=(RealDataRouter, {}),
+                depart=veh['depart'],
+                num_vehicles=1)
+        self.network.vehicles = deepcopy(new_vehicles)
 
     def get_state(self):
         obs = {}
@@ -101,7 +137,7 @@ class MultiRealWorldPOEnv(RealWorldPOEnv, MultiEnv):
                   + rewards.penalize_standstill(self, gain=0.2)
 
         # each agent receives reward normalized by number of lights
-        rew /= len(self.k.vehicle.get_rl_ids())
+        rew /= len(self.k.vehicle.get_rl_ids())+ 0.0001
 
         rews = {}
         for rl_id_num, rl_id in enumerate(self.k.vehicle.get_rl_ids()):

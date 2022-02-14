@@ -77,6 +77,7 @@ class TraCIRDKernelNetwork(BaseKernelNetwork):
         self._connections = None
         self._edge_list = None
         self._junction_list = None
+        self._junction_data = dict()
         self.__max_speed = None
         self.__length = None  # total length
         self.__non_internal_length = None  # total length of non-internal edges
@@ -316,6 +317,24 @@ class TraCIRDKernelNetwork(BaseKernelNetwork):
         try:
             return self._connections['next'][edge][lane]
         except KeyError:
+            return []
+
+    def get_inclane(self, junction_id):
+        """ input: junction_id 
+            output: a list of lane ids in inclane of the corresponding junction"""
+        try:
+            return self._junction_data[junction_id]['incLanes']
+        except KeyError:
+            print("KeyError get inclane")
+            return []
+
+    def get_incedge(self, junction_id):
+        """ input: junction_id 
+            output: a list of lane ids in inclane of the corresponding junction"""
+        try:
+            return self._junction_data[junction_id]['incEdges']
+        except KeyError:
+            print("KeyError get incEdges")
             return []
 
     def prev_edge(self, edge, lane):
@@ -934,5 +953,19 @@ class TraCIRDKernelNetwork(BaseKernelNetwork):
             prev_conn_data[to_edge][to_lane].append((from_edge, from_lane))
 
         connection_data = {'next': next_conn_data, 'prev': prev_conn_data}
+
+        # collect junction data
+        for junction in root.findall('junction'):
+            junction_id = junction.attrib['id']
+            inclanes = junction.attrib['incLanes'].split(' ')
+            intlanes = junction.attrib['intLanes'].split(' ')
+            self._junction_data[junction_id] = dict()
+            self._junction_data[junction_id]['incLanes'] = inclanes
+            self._junction_data[junction_id]['intLanes'] = intlanes
+            incedge = []
+            for lid in inclanes:
+                incedge.extend([lid[:-2]])
+
+            self._junction_data[junction_id]['incEdges'] = list(set(incedge))
 
         return net_data, connection_data

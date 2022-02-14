@@ -109,7 +109,7 @@ class RealWorldEnv(Env):
         https://github.com/openai/gym/blob/master/gym/spaces/discrete.py
     """
 
-    def __init__(self, env_params, sim_params, network, simulator='traci'):
+    def __init__(self, env_params, sim_params, network, simulator='traci_rd'):
 
         for p in ADDITIONAL_ENV_PARAMS.keys():
             if p not in env_params.additional_params:
